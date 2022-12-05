@@ -64,4 +64,15 @@ class Data implements Comparable {
     }
     throw RuntimeError("类型不匹配，无法比较");
   }
+
+  @override
+  String toString() {
+    if (type == DataType.integer) {
+      return "$value";
+    }
+    else if (type == DataType.character) {
+      return "'${String.fromCharCode(value)}'";
+    }
+    return "NUL";
+  }
 }

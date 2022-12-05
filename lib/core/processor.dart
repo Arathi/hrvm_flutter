@@ -56,15 +56,29 @@ class Processor {
     return data.value;
   }
 
-  void lda(int operand, AddressMode addressMode) {
+  void lda(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     int address = operand;
+    
+    // 立即寻址
+    if (addressMode == AddressMode.immediate) {
+      if (operand >= 0x10000) {
+        acc = Data.char(String.fromCharCode(operand - 0x10000));
+      }
+      else {
+        acc = Data.int(operand);
+      }
+      return;
+    }
+
+    // 间接寻址
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
     }
+
     acc = machine.memory.read(address);
   }
 
-  void sta(int operand, AddressMode addressMode) {
+  void sta(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
@@ -72,7 +86,15 @@ class Processor {
     machine.memory.write(address, acc);
   }
 
-  void add(int operand, AddressMode addressMode) {
+  void add(int operand, {AddressMode addressMode = AddressMode.absolute}) {
+    // 立即寻址
+    if (addressMode == AddressMode.immediate) {
+      if (operand >= -999 && operand <= 999) {
+        acc!.value += operand;
+      }
+      return;
+    }
+
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
@@ -82,7 +104,15 @@ class Processor {
     acc = acc! + data!;
   }
 
-  void sub(int operand, AddressMode addressMode) {
+  void sub(int operand, {AddressMode addressMode = AddressMode.absolute}) {
+    // 立即寻址
+    if (addressMode == AddressMode.immediate) {
+      if (operand >= -999 && operand <= 999) {
+        acc!.value -= operand;
+      }
+      return;
+    }
+
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
@@ -92,7 +122,7 @@ class Processor {
     acc = acc! - data!;
   }
 
-  void inc(int operand, AddressMode addressMode) {
+  void inc(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
@@ -102,7 +132,7 @@ class Processor {
     acc = data!.inc();
   }
 
-  void dec(int operand, AddressMode addressMode) {
+  void dec(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
@@ -112,17 +142,36 @@ class Processor {
     acc = data!.dec();
   }
 
-  void jmp(int operand) {
+  void jmp(int operand, {AddressMode addressMode = AddressMode.absolute}) {
+    int address = operand;
+    if (addressMode == AddressMode.indirect) {
+      address = indirectAddressing(address);
+    }
+
     pc = operand;
   }
 
-  void beq(int operand) {
+  void beq(int operand, {AddressMode addressMode = AddressMode.absolute}) {
+    if (addressMode == AddressMode.relative) {
+      if (acc!.value == 0) {
+        pc = operand;
+      }
+      return;
+    }
+
     if (acc!.value == 0) {
       pc = operand;
     }
   }
 
-  void bmi(int operand) {
+  void bmi(int operand, {AddressMode addressMode = AddressMode.absolute}) {
+    if (addressMode == AddressMode.relative) {
+      if (acc!.value < 0) {
+        pc += operand;
+      }
+      return;
+    }
+
     if (acc!.value < 0) {
       pc = operand;
     }
