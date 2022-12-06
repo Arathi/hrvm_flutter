@@ -5,6 +5,7 @@ import '../../core/data_queue.dart';
 import '../../core/machine.dart';
 import '../../core/processor.dart';
 import '../../core/memory.dart';
+import '../../core/instruction.dart';
 
 class MachinePage extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class MachinePageState extends State<MachinePage> {
     super.dispose();
   }
 
-  void exec(String opcode) {
+  void _instTest(String opcode) {
     setState(() {
       if (opcode == "PLA") {
         processor.pla();
@@ -253,173 +254,174 @@ class MachinePageState extends State<MachinePage> {
       ),
     ];
 
-    const Color QueueInstColor = Color(0xFF9CB65B);
-    const Color MemoryInstColor = Color(0xFFC96A54);
-    const Color ArithmeticInstColor = Color(0xFFC68D62);
-    const Color JumpInstColor = Color(0xFF8D8DC1);
+    const Color queueInstColor = Color(0xFF9CB65B);
+    const Color memoryInstColor = Color(0xFFC96A54);
+    const Color arithmeticInstColor = Color(0xFFC68D62);
+    const Color jumpInstColor = Color(0xFF8D8DC1);
 
     return Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            // 操作数
-            Row(
-              children: [
-                const Text("操作数："),
-                SizedBox(
-                  width: 128,
-                  child: TextField(
-                    controller: _operandController,
-                    onChanged: (value) {
-                      setState(() {
-                        print("操作数改变为：$value");
-                        _operand = value;
-                      });
-                    },
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          // 操作数
+          Row(
+            children: [
+              const Text("操作数："),
+              SizedBox(
+                width: 128,
+                child: TextField(
+                  controller: _operandController,
+                  onChanged: (value) {
+                    setState(() {
+                      print("操作数改变为：$value");
+                      _operand = value;
+                    });
+                  },
+                ),
+              ),
+              DropdownButton(
+                value: _addressMode,
+                items: items,
+                onChanged: _onAccessModeChanged,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // 队列指令
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _instTest("PLA"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    queueInstColor,
                   ),
                 ),
-                DropdownButton(
-                  value: _addressMode,
-                  items: items,
-                  onChanged: _onAccessModeChanged,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // 队列指令
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => exec("PLA"),
-                  child: const Text("PLA"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      QueueInstColor,
-                    ),
+                child: const Text("PLA"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("PHA"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    queueInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("PHA"),
-                  child: const Text("PHA"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      QueueInstColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
+                child: const Text("PHA"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
 
-            // 内存读写指令
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => exec("LDA"),
-                  child: const Text("LDA"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      MemoryInstColor,
-                    ),
+          // 内存读写指令
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _instTest("LDA"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    memoryInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("STA"),
-                  child: const Text("STA"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      MemoryInstColor,
-                    ),
+                child: const Text("LDA"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("STA"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    memoryInstColor,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
+                child: const Text("STA"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
 
-            // 算术运算指令
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => exec("ADD"),
-                  child: const Text("ADD"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      ArithmeticInstColor,
-                    ),
+          // 算术运算指令
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _instTest("ADD"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    arithmeticInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("SUB"),
-                  child: const Text("SUB"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      ArithmeticInstColor,
-                    ),
+                child: const Text("ADD"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("SUB"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    arithmeticInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("INC"),
-                  child: const Text("INC"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      ArithmeticInstColor,
-                    ),
+                child: const Text("SUB"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("INC"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    arithmeticInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("DEC"),
-                  child: const Text("DEC"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      ArithmeticInstColor,
-                    ),
+                child: const Text("INC"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("DEC"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    arithmeticInstColor,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
+                child: const Text("DEC"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
 
-            // 跳转指令
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => exec("JMP"),
-                  child: const Text("JMP"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      JumpInstColor,
-                    ),
+          // 跳转指令
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _instTest("JMP"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    jumpInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("BEQ"),
-                  child: const Text("BEQ"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      JumpInstColor,
-                    ),
+                child: const Text("JMP"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("BEQ"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    jumpInstColor,
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => exec("BMI"),
-                  child: const Text("BMI"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      JumpInstColor,
-                    ),
+                child: const Text("BEQ"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _instTest("BMI"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    jumpInstColor,
                   ),
                 ),
-              ],
-            ),
-          ],
-        ));
+                child: const Text("BMI"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildBody(BuildContext context) {

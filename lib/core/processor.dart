@@ -2,21 +2,7 @@ import 'exceptions.dart';
 import 'machine.dart';
 
 import 'data.dart';
-
-enum AddressMode {
-  // 累加器寻址
-  accumulator,
-  // 绝对寻址
-  absolute,
-  // 立即寻址
-  immediate,
-  // 隐含寻址
-  implied,
-  // 间接寻址
-  indirect,
-  // 相对寻址
-  relative,
-}
+import 'instruction.dart';
 
 class Processor {
   late Machine machine;

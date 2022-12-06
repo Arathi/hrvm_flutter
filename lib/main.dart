@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'gui/pages/title_page.dart';
 import 'gui/pages/machine_page.dart';
+import 'gui/pages/levels_page.dart';
 
 class HrvmApp extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class AppState extends State<HrvmApp> {
   Map<String, WidgetBuilder> getRoutes() {
     return <String, WidgetBuilder>{
       "/title": (context) => TitlePage(),
+      "/levels": (context) => LevelsPage(this),
       "/machine": (context) => MachinePage(),
     };
   }
