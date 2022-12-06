@@ -20,11 +20,11 @@ enum AddressMode {
 
 class Processor {
   late Machine machine;
-  
+
   Data? acc;
   int pc = 0;
   int counter = 0;
-  
+
   Processor(this.machine);
 
   void reset() {
@@ -35,10 +35,12 @@ class Processor {
 
   void pla() {
     acc = machine.inbox.pop();
+    print("PLA ; acc = $acc");
   }
 
   void pha() {
     machine.outbox.push(acc!);
+    print("PHA ; acc = $acc");
     acc = null;
   }
 
@@ -48,7 +50,7 @@ class Processor {
     if (data == null) {
       throw RuntimeError("memory[$address] = null");
     }
-    
+
     if (data.type != DataType.integer) {
       throw RuntimeError("memory[$address] = $data");
     }
@@ -58,21 +60,24 @@ class Processor {
 
   void lda(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     int address = operand;
-    
+
     // 立即寻址
     if (addressMode == AddressMode.immediate) {
       if (operand >= 0x10000) {
         acc = Data.char(String.fromCharCode(operand - 0x10000));
-      }
-      else {
+      } else {
         acc = Data.int(operand);
       }
+      print("LDA #$operand");
       return;
     }
 
     // 间接寻址
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("LDA ($operand)");
+    } else {
+      print("LDA $operand");
     }
 
     acc = machine.memory.read(address);
@@ -82,7 +87,11 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("STA ($operand)");
+    } else {
+      print("STA $operand");
     }
+
     machine.memory.write(address, acc);
   }
 
@@ -91,6 +100,7 @@ class Processor {
     if (addressMode == AddressMode.immediate) {
       if (operand >= -999 && operand <= 999) {
         acc!.value += operand;
+        print("ADD #$operand");
       }
       return;
     }
@@ -98,6 +108,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("ADD ($operand)");
+    } else {
+      print("ADD $operand");
     }
 
     var data = machine.memory.read(address);
@@ -109,6 +122,7 @@ class Processor {
     if (addressMode == AddressMode.immediate) {
       if (operand >= -999 && operand <= 999) {
         acc!.value -= operand;
+        print("SUB #$operand");
       }
       return;
     }
@@ -116,6 +130,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("SUB ($operand)");
+    } else {
+      print("SUB $operand");
     }
 
     var data = machine.memory.read(address);
@@ -126,6 +143,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("INC ($operand)");
+    } else {
+      print("INC $operand");
     }
 
     var data = machine.memory.read(address);
@@ -136,6 +156,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("DEC ($operand)");
+    } else {
+      print("DEC $operand");
     }
 
     var data = machine.memory.read(address);
@@ -146,6 +169,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
+      print("JMP ($operand)");
+    } else {
+      print("JMP $operand");
     }
 
     pc = operand;
@@ -154,7 +180,7 @@ class Processor {
   void beq(int operand, {AddressMode addressMode = AddressMode.absolute}) {
     if (addressMode == AddressMode.relative) {
       if (acc!.value == 0) {
-        pc = operand;
+        pc += operand;
       }
       return;
     }
