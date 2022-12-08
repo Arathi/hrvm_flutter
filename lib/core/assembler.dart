@@ -154,5 +154,9 @@ class Assembler {
     return inst;
   }
 
-  // Program link() {}
+  Program? link() {
+    // Program program = Program.link();
+    // return program;
+    return null;
+  }
 }

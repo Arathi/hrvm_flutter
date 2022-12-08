@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'data.dart';
 import 'exceptions.dart';
 

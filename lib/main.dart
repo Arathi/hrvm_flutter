@@ -5,6 +5,8 @@ import 'gui/pages/machine_page.dart';
 import 'gui/pages/levels_page.dart';
 
 class HrvmApp extends StatefulWidget {
+  const HrvmApp({super.key});
+
   @override
   State<StatefulWidget> createState() => AppState();
 }
@@ -37,5 +39,5 @@ class AppState extends State<HrvmApp> {
 }
 
 void main() {
-  runApp(HrvmApp());
+  runApp(const HrvmApp());
 }

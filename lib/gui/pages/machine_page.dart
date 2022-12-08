@@ -8,6 +8,8 @@ import '../../core/memory.dart';
 import '../../core/instruction.dart';
 
 class MachinePage extends StatefulWidget {
+  const MachinePage({super.key});
+
   @override
   State<StatefulWidget> createState() => MachinePageState();
 }
@@ -170,9 +172,7 @@ class MachinePageState extends State<MachinePage> {
             height: 10,
           ),
           Expanded(
-            child: Container(
-              child: Column(children: dataBlocks),
-            ),
+            child: Column(children: dataBlocks),
           ),
         ],
       ),

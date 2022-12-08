@@ -1,4 +1,5 @@
 import 'package:hrvm/core/data.dart';
+import 'package:hrvm/core/instruction.dart';
 import 'package:hrvm/core/processor.dart';
 import 'package:hrvm/core/machine.dart';
 import 'package:flutter_test/flutter_test.dart';
