@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import 'gui/pages/title_page.dart';
 import 'gui/pages/machine_page.dart';
@@ -22,9 +23,9 @@ class AppState extends State<HrvmApp> {
 
   Map<String, WidgetBuilder> getRoutes() {
     return <String, WidgetBuilder>{
-      "/title": (context) => TitlePage(),
+      "/title": (context) => const TitlePage(),
       "/levels": (context) => LevelsPage(this),
-      "/machine": (context) => MachinePage(),
+      "/machine": (context) => MachinePage(this),
     };
   }
 

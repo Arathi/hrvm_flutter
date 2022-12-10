@@ -1,3 +1,5 @@
+import 'package:logging/logging.dart';
+
 import 'exceptions.dart';
 import 'machine.dart';
 
@@ -5,6 +7,9 @@ import 'data.dart';
 import 'instruction.dart';
 
 class Processor {
+  final Logger logger = Logger(
+    "Processor"
+  );
   late Machine machine;
 
   Data? acc;
@@ -14,6 +19,7 @@ class Processor {
   Processor(this.machine);
 
   void reset() {
+    logger.level = Level.ALL;
     acc = null;
     pc = 0;
     counter = 0;
@@ -21,12 +27,16 @@ class Processor {
 
   void pla() {
     acc = machine.inbox.pop();
-    print("PLA ; acc = $acc");
+    logger.info("PLA ; acc = $acc");
   }
 
   void pha() {
+    if (acc == null) {
+      throw RuntimeError("累加器为空，无法push到OUTBOX");
+    }
+
     machine.outbox.push(acc!);
-    print("PHA ; acc = $acc");
+    logger.info("PHA ; acc = $acc");
     acc = null;
   }
 
@@ -54,16 +64,16 @@ class Processor {
       } else {
         acc = Data.int(operand);
       }
-      print("LDA #$operand");
+      logger.info("LDA #$operand");
       return;
     }
 
     // 间接寻址
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("LDA ($operand)");
+      logger.info("LDA ($operand)");
     } else {
-      print("LDA $operand");
+      logger.info("LDA $operand");
     }
 
     acc = machine.memory.read(address);
@@ -73,9 +83,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("STA ($operand)");
+      logger.info("STA ($operand)");
     } else {
-      print("STA $operand");
+      logger.info("STA $operand");
     }
 
     machine.memory.write(address, acc);
@@ -86,7 +96,7 @@ class Processor {
     if (addressMode == AddressMode.immediate) {
       if (operand >= -999 && operand <= 999) {
         acc!.value += operand;
-        print("ADD #$operand");
+        logger.info("ADD #$operand");
       }
       return;
     }
@@ -94,9 +104,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("ADD ($operand)");
+      logger.info("ADD ($operand)");
     } else {
-      print("ADD $operand");
+      logger.info("ADD $operand");
     }
 
     var data = machine.memory.read(address);
@@ -108,7 +118,7 @@ class Processor {
     if (addressMode == AddressMode.immediate) {
       if (operand >= -999 && operand <= 999) {
         acc!.value -= operand;
-        print("SUB #$operand");
+        logger.info("SUB #$operand");
       }
       return;
     }
@@ -116,9 +126,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("SUB ($operand)");
+      logger.info("SUB ($operand)");
     } else {
-      print("SUB $operand");
+      logger.info("SUB $operand");
     }
 
     var data = machine.memory.read(address);
@@ -129,9 +139,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("INC ($operand)");
+      logger.info("INC ($operand)");
     } else {
-      print("INC $operand");
+      logger.info("INC $operand");
     }
 
     var data = machine.memory.read(address);
@@ -142,9 +152,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("DEC ($operand)");
+      logger.info("DEC ($operand)");
     } else {
-      print("DEC $operand");
+      logger.info("DEC $operand");
     }
 
     var data = machine.memory.read(address);
@@ -155,9 +165,9 @@ class Processor {
     int address = operand;
     if (addressMode == AddressMode.indirect) {
       address = indirectAddressing(address);
-      print("JMP ($operand)");
+      logger.info("JMP ($operand)");
     } else {
-      print("JMP $operand");
+      logger.info("JMP $operand");
     }
 
     pc = operand;

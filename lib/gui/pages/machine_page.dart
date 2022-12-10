@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hrvm/main.dart';
 
 import '../../core/data.dart';
 import '../../core/data_queue.dart';
@@ -8,7 +9,9 @@ import '../../core/memory.dart';
 import '../../core/instruction.dart';
 
 class MachinePage extends StatefulWidget {
-  const MachinePage({super.key});
+  AppState appState;
+
+  MachinePage(this.appState, {super.key});
 
   @override
   State<StatefulWidget> createState() => MachinePageState();
@@ -20,6 +23,7 @@ class MachinePageState extends State<MachinePage> {
   String _operand = "0";
   AddressMode _addressMode = AddressMode.absolute;
 
+  AppState get appState => widget.appState;
   Processor get processor => machine.processor;
   Memory get memory => machine.memory;
 
@@ -119,6 +123,7 @@ class MachinePageState extends State<MachinePage> {
     return Container(
       margin: const EdgeInsets.all(3),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             color: upperColor,
